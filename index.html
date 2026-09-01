@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Status Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-color: #f4f7fe;
+            --card-bg: #ffffff;
+            --text-main: #2b3674;
+            --text-muted: #a3aed1;
+            --primary: #4318ff;
+            --border-color: #e9edf7;
+            --success-bg: #e6fffa;
+            --success-text: #05cd99;
+            --warning-bg: #fffbeb;
+            --warning-text: #f59e0b;
+            --danger-bg: #fee2e2;
+            --danger-text: #ef4444;
+            --neutral-bg: #f3f4f6;
+            --neutral-text: #6b7280;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            padding: 2rem;
+            min-height: 100vh;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+
+        .header p {
+            color: var(--text-muted);
+            margin-top: 0.25rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-right: 1rem;
+        }
+
+        .icon-blue { background: #e0e5ff; color: var(--primary); }
+        .icon-green { background: var(--success-bg); color: var(--success-text); }
+        .icon-orange { background: var(--warning-bg); color: var(--warning-text); }
+
+        .stat-content h3 {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .stat-content p {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-top: 0.25rem;
+        }
+
+        .table-container {
+            background: var(--card-bg);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .table-header h2 {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .controls {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+        }
+
+        .search-box input {
+            padding: 0.6rem 1rem 0.6rem 2.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: 2rem;
+            font-size: 0.875rem;
+            outline: none;
+            width: 250px;
+            transition: all 0.3s ease;
+            background: var(--bg-color);
+        }
+
+        .search-box input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(67, 24, 255, 0.1);
+        }
+
+        .filter-box select {
+            padding: 0.6rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 2rem;
+            font-size: 0.875rem;
+            outline: none;
+            background: var(--bg-color);
+            color: var(--text-main);
+            cursor: pointer;
+        }
+
+        .export-btn {
+            padding: 0.6rem 1.2rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 2rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .export-btn:hover {
+            background: #3311cc;
+            box-shadow: 0 4px 6px rgba(67, 24, 255, 0.2);
+        }
+
+        .sortable {
+            cursor: pointer;
+            user-select: none;
+            transition: color 0.2s;
+        }
+
+        .sortable:hover {
+            color: var(--primary);
+        }
+
+        .sort-icon {
+            margin-left: 0.5rem;
+            font-size: 0.7rem;
+            color: var(--border-color);
+        }
+
+        .sortable.active .sort-icon {
+            color: var(--primary);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.875rem;
+        }
+
+        th {
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
+        }
+
+        tbody tr {
+            transition: background 0.2s ease;
+        }
+
+        tbody tr:hover {
+            background: #f8fafc;
+        }
+
+        .student-name {
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .student-reg {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 0.25rem;
+        }
+
+        .badge {
+            padding: 0.35rem 0.85rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+            text-align: center;
+            border: 1px solid transparent;
+            letter-spacing: 0.02em;
+        }
+
+        .badge::before {
+            content: '';
+            display: block;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+        }
+
+        .badge.active, .badge.completed, .badge.yes {
+            background: #f0fdf4;
+            color: #166534;
+            border-color: #bbf7d0;
+        }
+        .badge.active::before, .badge.completed::before, .badge.yes::before {
+            background-color: #22c55e;
+            box-shadow: 0 0 0 2px #dcfce7;
+        }
+
+        .badge.invitation-sent {
+            background: #eff6ff;
+            color: #1e40af;
+            border-color: #bfdbfe;
+        }
+        .badge.invitation-sent::before {
+            background-color: #3b82f6;
+            box-shadow: 0 0 0 2px #dbeafe;
+        }
+
+        .badge.not-completed, .badge.not-created {
+            background: #fef2f2;
+            color: #991b1b;
+            border-color: #fecaca;
+        }
+        .badge.not-completed::before, .badge.not-created::before {
+            background-color: #ef4444;
+            box-shadow: 0 0 0 2px #fee2e2;
+        }
+
+        @media (max-width: 1024px) {
+            .table-responsive {
+                overflow-x: auto;
+            }
+            .controls {
+                flex-direction: column;
+            }
+            .search-box input {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div>
+            <h1>Mazharul Uloom College</h1>
+            <p>B.Sc Computer Science - Salesforce Admin Status Dashboard</p>
+        </div>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon icon-blue">
+                <i class="fa-solid fa-users"></i>
+            </div>
+            <div class="stat-content">
+                <h3>Total Students</h3>
+                <p id="total-students">0</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon icon-green">
+                <i class="fa-solid fa-check-circle"></i>
+            </div>
+            <div class="stat-content">
+                <h3>Active Students</h3>
+                <p id="active-students">0</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon icon-orange">
+                <i class="fa-solid fa-book-open"></i>
+            </div>
+            <div class="stat-content">
+                <h3>Fully Completed</h3>
+                <p id="fully-completed">0</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="table-container">
+        <div class="table-header">
+            <h2>Student Progress</h2>
+            <div class="controls">
+                <button id="export-btn" class="export-btn">
+                    <i class="fa-solid fa-download"></i> Export CSV
+                </button>
+                <div class="filter-box">
+                    <select id="status-filter">
+                        <option value="all">All Statuses</option>
+                        <option value="Completed">Final: Completed/Yes</option>
+                        <option value="Not Completed">Final: Not Completed/Created</option>
+                    </select>
+                </div>
+                <div class="search-box">
+                    <i class="fa-solid fa-search"></i>
+                    <input type="text" id="search-input" placeholder="Search by name or reg no...">
+                </div>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th class="sortable" data-sort="name">Name <i class="fa-solid fa-sort sort-icon"></i></th>
+                        <th class="sortable active" data-sort="regNo">Reg No <i class="fa-solid fa-sort-up sort-icon"></i></th>
+                        <th class="sortable" data-sort="track">Track <i class="fa-solid fa-sort sort-icon"></i></th>
+                        <th class="sortable" data-sort="invitation">Invitation <i class="fa-solid fa-sort sort-icon"></i></th>
+                        <th class="sortable" data-sort="mod1">Module 1 <i class="fa-solid fa-sort sort-icon"></i></th>
+                        <th class="sortable" data-sort="mod2">Module 2 <i class="fa-solid fa-sort sort-icon"></i></th>
+                        <th class="sortable" data-sort="mod3">Module 3 <i class="fa-solid fa-sort sort-icon"></i></th>
+                        <th class="sortable" data-sort="final">Final Status <i class="fa-solid fa-sort sort-icon"></i></th>
+                    </tr>
+                </thead>
+                <tbody id="table-body">
+                    <!-- Rows will be injected by JS -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        const mockData = [
+            { name: "H S Mohammed Farhan", regNo: "tvu31931924U18012", track: "Salesforce Administrator with Agentforce", invitation: "Invitation Sent", mod1: "Not Completed", mod2: "Not Completed", mod3: "Not Completed", final: "Yes" },
+            { name: "Mohammed Sameer A", regNo: "tvu31931924U18018", track: "Salesforce Administrator with Agentforce", invitation: "Invitation Sent", mod1: "Not Completed", mod2: "Not Completed", mod3: "Not Completed", final: "Yes" },
+            { name: "Sanjay S", regNo: "tvu31931924U18026", track: "Salesforce Administrator with Agentforce", invitation: "Invitation Sent", mod1: "Not Completed", mod2: "Not Completed", mod3: "Not Completed", final: "Not Created" },
+            { name: "Mohammed Razi T", regNo: "tvu31931924U18017", track: "Salesforce Administrator with Agentforce", invitation: "active", mod1: "Completed", mod2: "Not Completed", mod3: "Completed", final: "Yes" },
+            { name: "Akash C", regNo: "tvu31931924U18001", track: "Salesforce Administrator with Agentforce", invitation: "Invitation Sent", mod1: "Not Completed", mod2: "Not Completed", mod3: "Completed", final: "Yes" },
+            { name: "A Mohammed Kounain", regNo: "tvu31931922U18029", track: "Salesforce Administrator with Agentforce", invitation: "Invitation Sent", mod1: "Not Completed", mod2: "Not Completed", mod3: "Not Completed", final: "Yes" },
+            { name: "T Mohammed Azhan", regNo: "tvu31931924U18010", track: "Salesforce Administrator with Agentforce", invitation: "active", mod1: "Completed", mod2: "Not Completed", mod3: "Not Completed", final: "Not Created" },
+            { name: "P Mohammed Faiz", regNo: "tvu31931924U18011", track: "Salesforce Administrator with Agentforce", invitation: "active", mod1: "Completed", mod2: "Completed", mod3: "Completed", final: "Yes" },
+            { name: "T. Sehal Ahmed", regNo: "tvu31931924U18029", track: "Salesforce Administrator with Agentforce", invitation: "active", mod1: "Completed", mod2: "Not Completed", mod3: "Completed", final: "Yes" },
+            { name: "S Mohammed Siddique", regNo: "tvu31931924U18019", track: "Salesforce Administrator with Agentforce", invitation: "active", mod1: "Not Completed", mod2: "Not Completed", mod3: "Not Completed", final: "Yes" },
+            { name: "Mohammed Arqum V", regNo: "tvu31931924U18009", track: "Salesforce Administrator with Agentforce", invitation: "Invitation Sent", mod1: "Not Completed", mod2: "Not Completed", mod3: "Not Completed", final: "Not Created" },
+            { name: "A Mohammed Nahir", regNo: "tvu31931924U18015", track: "Salesforce Administrator with Agentforce", invitation: "active", mod1: "Not Completed", mod2: "Not Completed", mod3: "Completed", final: "Yes" },
+            { name: "Sairaj M", regNo: "tvu31931924U18025", track: "Salesforce Administrator with Agentforce", invitation: "Invitation Sent", mod1: "Not Completed", mod2: "Not Completed", mod3: "Completed", final: "Yes" },
+            { name: "I.Saif Ali", regNo: "tvu31931924U18024", track: "Salesforce Administrator with Agentforce", invitation: "active", mod1: "Completed", mod2: "Not Completed", mod3: "Completed", final: "Yes" },
+            { name: "Mohammed Sufiyan A", regNo: "tvu31931924U18020", track: "Salesforce Administrator with Agentforce", invitation: "active", mod1: "Completed", mod2: "Not Completed", mod3: "Not Completed", final: "Yes" },
+            { name: "S Mohammed", regNo: "tvu31931924U18023", track: "Salesforce Administrator with Agentforce", invitation: "Invitation Sent", mod1: "Not Completed", mod2: "Not Completed", mod3: "Not Completed", final: "Yes" },
+            { name: "V Lithishwaran", regNo: "tvu31931924U18004", track: "Salesforce Administrator with Agentforce", invitation: "Invitation Sent", mod1: "Not Completed", mod2: "Not Completed", mod3: "Not Completed", final: "Yes" },
+            { name: "Manikandan S", regNo: "tvu31931924U18006", track: "Salesforce Administrator with Agentforce", invitation: "Invitation Sent", mod1: "Not Completed", mod2: "Not Completed", mod3: "Completed", final: "Yes" },
+            { name: "Mohammed Yaser", regNo: "tvu31931924U18022", track: "Salesforce Administrator with Agentforce", invitation: "active", mod1: "Not Completed", mod2: "Not Completed", mod3: "Not Completed", final: "Not Created" },
+            { name: "Devanath S", regNo: "tvu31931924U18002", track: "Salesforce Administrator with Agentforce", invitation: "Invitation Sent", mod1: "Not Completed", mod2: "Not Completed", mod3: "Not Completed", final: "Not Created" },
+            { name: "Mohammed Irbaz.I", regNo: "tvu31931924U18014", track: "Salesforce Administrator with Agentforce", invitation: "Invitation Sent", mod1: "Not Completed", mod2: "Not Completed", mod3: "Not Completed", final: "Not Created" },
+            { name: "Saranraj S", regNo: "tvu31931924U18027", track: "Salesforce Administrator with Agentforce", invitation: "active", mod1: "Completed", mod2: "Not Completed", mod3: "Completed", final: "Not Created" },
+            { name: "V Fareed Ahmed", regNo: "tvu31931924U18003", track: "Salesforce Administrator with Agentforce", invitation: "Invitation Sent", mod1: "Not Completed", mod2: "Not Completed", mod3: "Not Completed", final: "Not Created" },
+            { name: "Sharif Umer N", regNo: "tvu31931924U18030", track: "Salesforce Administrator with Agentforce", invitation: "Invitation Sent", mod1: "Not Completed", mod2: "Not Completed", mod3: "Not Completed", final: "Not Created" },
+            { name: "V I Mohammed Thaha", regNo: "tvu31931924U18008", track: "Salesforce Administrator with Agentforce", invitation: "Invitation Sent", mod1: "Not Completed", mod2: "Not Completed", mod3: "Not Completed", final: "Not Created" },
+            { name: "E Y Mohammed Yaseer", regNo: "tvu31931924U18021", track: "Salesforce Administrator with Agentforce", invitation: "Invitation Sent", mod1: "Not Completed", mod2: "Not Completed", mod3: "Completed", final: "Yes" },
+            { name: "A Mohammed Imran", regNo: "tvu31931924U18013", track: "Salesforce Administrator with Agentforce", invitation: "active", mod1: "Completed", mod2: "Completed", mod3: "Completed", final: "Yes" },
+            { name: "Mohmmed Rashid R", regNo: "tvu31931924U18016", track: "Salesforce Administrator with Agentforce", invitation: "active", mod1: "Completed", mod2: "Not Completed", mod3: "Completed", final: "Yes" },
+            { name: "Mohamad Zabiulla S", regNo: "tvu31931924U18007", track: "Salesforce Administrator with Agentforce", invitation: "Invitation Sent", mod1: "Not Completed", mod2: "Not Completed", mod3: "Completed", final: "Yes" },
+            { name: "M G Maaz", regNo: "tvu31931924U18005", track: "Salesforce Administrator with Agentforce", invitation: "active", mod1: "Completed", mod2: "Not Completed", mod3: "Completed", final: "Yes" },
+            { name: "Sayed Muhammed Mohathaseem", regNo: "tvu31931924U18028", track: "Salesforce Administrator with Agentforce", invitation: "active", mod1: "Not Completed", mod2: "Not Completed", mod3: "Not Completed", final: "Yes" }
+        ];
+
+        const getBadgeClass = (status) => {
+            const s = status.toLowerCase();
+            if (s === 'active' || s === 'completed' || s === 'yes') return 'badge active';
+            if (s === 'invitation sent') return 'badge invitation-sent';
+            return 'badge not-completed'; // Not Completed, Not Created
+        };
+
+        const renderTable = (data) => {
+            const tbody = document.getElementById('table-body');
+            tbody.innerHTML = '';
+            
+            data.forEach(student => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>
+                        <div class="student-name">${student.name}</div>
+                    </td>
+                    <td>
+                        <div class="student-reg" style="margin-top:0;">${student.regNo}</div>
+                    </td>
+                    <td>${student.track}</td>
+                    <td><span class="${getBadgeClass(student.invitation)}">${student.invitation}</span></td>
+                    <td><span class="${getBadgeClass(student.mod1)}">${student.mod1}</span></td>
+                    <td><span class="${getBadgeClass(student.mod2)}">${student.mod2}</span></td>
+                    <td><span class="${getBadgeClass(student.mod3)}">${student.mod3}</span></td>
+                    <td><span class="${getBadgeClass(student.final)}">${student.final}</span></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        };
+
+        const updateStats = (data) => {
+            document.getElementById('total-students').textContent = data.length;
+            const active = data.filter(d => d.invitation.toLowerCase() === 'active').length;
+            document.getElementById('active-students').textContent = active;
+            const fullyCompleted = data.filter(d => d.mod1 === 'Completed' && d.mod2 === 'Completed' && d.mod3 === 'Completed').length;
+            document.getElementById('fully-completed').textContent = fullyCompleted;
+        };
+
+        let currentSortColumn = 'regNo';
+        let sortAscending = true;
+        let currentFilteredData = [...mockData];
+
+        const filterData = () => {
+            const searchTerm = document.getElementById('search-input').value.toLowerCase();
+            const statusFilter = document.getElementById('status-filter').value;
+
+            currentFilteredData = mockData.filter(student => {
+                const matchesSearch = student.name.toLowerCase().includes(searchTerm) || student.regNo.toLowerCase().includes(searchTerm);
+                let matchesStatus = true;
+                
+                if (statusFilter === 'Completed') {
+                    matchesStatus = student.final.toLowerCase() === 'yes' || student.final.toLowerCase() === 'completed';
+                } else if (statusFilter === 'Not Completed') {
+                    matchesStatus = student.final.toLowerCase() !== 'yes' && student.final.toLowerCase() !== 'completed';
+                }
+
+                return matchesSearch && matchesStatus;
+            });
+
+            applySorting();
+        };
+
+        const applySorting = () => {
+            if (currentSortColumn) {
+                currentFilteredData.sort((a, b) => {
+                    if (currentSortColumn === 'regNo') {
+                        let numA = parseInt(a.regNo.slice(-5)) || 0;
+                        let numB = parseInt(b.regNo.slice(-5)) || 0;
+                        return sortAscending ? numA - numB : numB - numA;
+                    } else {
+                        let valA = a[currentSortColumn].toLowerCase();
+                        let valB = b[currentSortColumn].toLowerCase();
+                        if (valA < valB) return sortAscending ? -1 : 1;
+                        if (valA > valB) return sortAscending ? 1 : -1;
+                        return 0;
+                    }
+                });
+            }
+            renderTable(currentFilteredData);
+            updateStats(currentFilteredData);
+        };
+
+        const handleSort = (e) => {
+            const th = e.currentTarget;
+            const column = th.dataset.sort;
+            
+            if (currentSortColumn === column) {
+                sortAscending = !sortAscending;
+            } else {
+                currentSortColumn = column;
+                sortAscending = true;
+            }
+
+            document.querySelectorAll('.sortable').forEach(el => {
+                el.classList.remove('active');
+                el.querySelector('.sort-icon').className = 'fa-solid fa-sort sort-icon';
+            });
+
+            th.classList.add('active');
+            th.querySelector('.sort-icon').className = sortAscending ? 'fa-solid fa-sort-up sort-icon' : 'fa-solid fa-sort-down sort-icon';
+
+            applySorting();
+        };
+
+        const exportToCSV = () => {
+            const headers = ['Name', 'Registration No', 'Track', 'Invitation', 'Module 1', 'Module 2', 'Module 3', 'Final Status'];
+            const csvRows = [headers.join(',')];
+            
+            currentFilteredData.forEach(s => {
+                csvRows.push([
+                    `"${s.name}"`, `"${s.regNo}"`, `"${s.track}"`, `"${s.invitation}"`, `"${s.mod1}"`, `"${s.mod2}"`, `"${s.mod3}"`, `"${s.final}"`
+                ].join(','));
+            });
+
+            const blob = new Blob([csvRows.join('\n')], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.setAttribute('hidden', '');
+            a.setAttribute('href', url);
+            a.setAttribute('download', 'student_progress.csv');
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        };
+
+        document.querySelectorAll('.sortable').forEach(th => th.addEventListener('click', handleSort));
+        document.getElementById('export-btn').addEventListener('click', exportToCSV);
+        document.getElementById('search-input').addEventListener('input', filterData);
+        document.getElementById('status-filter').addEventListener('change', filterData);
+
+        // Initial render
+        filterData();
+    </script>
+</body>
+</html>
