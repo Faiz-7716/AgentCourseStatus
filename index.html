@@ -389,10 +389,10 @@
                         <th class="sortable" data-sort="name">Name <i class="fa-solid fa-sort sort-icon"></i></th>
                         <th class="sortable active" data-sort="regNo">Reg No <i class="fa-solid fa-sort-up sort-icon"></i></th>
                         <th class="sortable" data-sort="track">Track <i class="fa-solid fa-sort sort-icon"></i></th>
-                        <th class="sortable" data-sort="invitation">Invitation <i class="fa-solid fa-sort sort-icon"></i></th>
-                        <th class="sortable" data-sort="mod1">APAC Membership Status <i class="fa-solid fa-sort sort-icon"></i></th>
-                        <th class="sortable" data-sort="mod2">Course Completion status <i class="fa-solid fa-sort sort-icon"></i></th>
-                        <th class="sortable" data-sort="mod3">Labs Completion Status <i class="fa-solid fa-sort sort-icon"></i></th>
+                        <th class="sortable" data-sort="invitation">APAC Membership Status <i class="fa-solid fa-sort sort-icon"></i></th>
+                        <th class="sortable" data-sort="mod1">Course Completion status <i class="fa-solid fa-sort sort-icon"></i></th>
+                        <th class="sortable" data-sort="mod2">Labs Completion Status <i class="fa-solid fa-sort sort-icon"></i></th>
+                        <th class="sortable" data-sort="mod3">MongoDB Skill Badge Status <i class="fa-solid fa-sort sort-icon"></i></th>
                         <th class="sortable" data-sort="final">SNU Registration Status <i class="fa-solid fa-sort sort-icon"></i></th>
                     </tr>
                 </thead>
@@ -544,7 +544,7 @@
         };
 
         const exportToCSV = () => {
-            const headers = ['Name', 'Registration No', 'Track', 'Invitation', 'APAC Membership Status', 'Course Completion status', 'Labs Completion Status', 'SNU Registration Status'];
+            const headers = ['Name', 'Registration No', 'Track', 'APAC Membership Status', 'Course Completion status', 'Labs Completion Status', 'MongoDB Skill Badge Status', 'SNU Registration Status'];
             const csvRows = [headers.join(',')];
             
             currentFilteredData.forEach(s => {
