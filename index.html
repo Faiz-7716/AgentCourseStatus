@@ -310,6 +310,16 @@
             .search-box input {
                 width: 100%;
             }
+            .badge {
+                padding: 0.4rem;
+                gap: 0;
+            }
+            .badge-text {
+                display: none;
+            }
+            th, td {
+                padding: 0.75rem 0.5rem; /* Tighter padding for mobile */
+            }
         }
     </style>
 </head>
@@ -362,8 +372,8 @@
                 <div class="filter-box">
                     <select id="status-filter">
                         <option value="all">All Statuses</option>
-                        <option value="Completed">Final: Completed/Yes</option>
-                        <option value="Not Completed">Final: Not Completed/Created</option>
+                        <option value="Completed">SNU Registration: Completed/Yes</option>
+                        <option value="Not Completed">SNU Registration: Not Completed/Created</option>
                     </select>
                 </div>
                 <div class="search-box">
@@ -380,10 +390,10 @@
                         <th class="sortable active" data-sort="regNo">Reg No <i class="fa-solid fa-sort-up sort-icon"></i></th>
                         <th class="sortable" data-sort="track">Track <i class="fa-solid fa-sort sort-icon"></i></th>
                         <th class="sortable" data-sort="invitation">Invitation <i class="fa-solid fa-sort sort-icon"></i></th>
-                        <th class="sortable" data-sort="mod1">Module 1 <i class="fa-solid fa-sort sort-icon"></i></th>
-                        <th class="sortable" data-sort="mod2">Module 2 <i class="fa-solid fa-sort sort-icon"></i></th>
-                        <th class="sortable" data-sort="mod3">Module 3 <i class="fa-solid fa-sort sort-icon"></i></th>
-                        <th class="sortable" data-sort="final">Final Status <i class="fa-solid fa-sort sort-icon"></i></th>
+                        <th class="sortable" data-sort="mod1">APAC Membership Status <i class="fa-solid fa-sort sort-icon"></i></th>
+                        <th class="sortable" data-sort="mod2">Course Completion status <i class="fa-solid fa-sort sort-icon"></i></th>
+                        <th class="sortable" data-sort="mod3">Labs Completion Status <i class="fa-solid fa-sort sort-icon"></i></th>
+                        <th class="sortable" data-sort="final">SNU Registration Status <i class="fa-solid fa-sort sort-icon"></i></th>
                     </tr>
                 </thead>
                 <tbody id="table-body">
@@ -449,11 +459,11 @@
                         <div class="student-reg" style="margin-top:0;">${student.regNo}</div>
                     </td>
                     <td>${student.track}</td>
-                    <td><span class="${getBadgeClass(student.invitation)}">${student.invitation}</span></td>
-                    <td><span class="${getBadgeClass(student.mod1)}">${student.mod1}</span></td>
-                    <td><span class="${getBadgeClass(student.mod2)}">${student.mod2}</span></td>
-                    <td><span class="${getBadgeClass(student.mod3)}">${student.mod3}</span></td>
-                    <td><span class="${getBadgeClass(student.final)}">${student.final}</span></td>
+                    <td><span class="${getBadgeClass(student.invitation)}" title="${student.invitation}"><span class="badge-text">${student.invitation}</span></span></td>
+                    <td><span class="${getBadgeClass(student.mod1)}" title="${student.mod1}"><span class="badge-text">${student.mod1}</span></span></td>
+                    <td><span class="${getBadgeClass(student.mod2)}" title="${student.mod2}"><span class="badge-text">${student.mod2}</span></span></td>
+                    <td><span class="${getBadgeClass(student.mod3)}" title="${student.mod3}"><span class="badge-text">${student.mod3}</span></span></td>
+                    <td><span class="${getBadgeClass(student.final)}" title="${student.final}"><span class="badge-text">${student.final}</span></span></td>
                 `;
                 tbody.appendChild(tr);
             });
@@ -534,7 +544,7 @@
         };
 
         const exportToCSV = () => {
-            const headers = ['Name', 'Registration No', 'Track', 'Invitation', 'Module 1', 'Module 2', 'Module 3', 'Final Status'];
+            const headers = ['Name', 'Registration No', 'Track', 'Invitation', 'APAC Membership Status', 'Course Completion status', 'Labs Completion Status', 'SNU Registration Status'];
             const csvRows = [headers.join(',')];
             
             currentFilteredData.forEach(s => {
